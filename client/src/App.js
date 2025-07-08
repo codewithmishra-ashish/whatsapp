@@ -1,24 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { AuthContext } from './context/AuthContext';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import ChatList from './components/ChatList';
+import ChatWindow from './components/ChatWindow';
 
 function App() {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return <div>Loading...</div>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="h-screen bg-gray-100">
+        <Routes>
+          <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+          <Route path="/signup" element={user ? <Navigate to="/" /> : <Signup />} />
+          <Route
+            path="/"
+            element={
+              user ? (
+                <div className="flex h-screen">
+                  <ChatList />
+                  <ChatWindow />
+                </div>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
